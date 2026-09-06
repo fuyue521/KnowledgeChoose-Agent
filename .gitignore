@@ -9,6 +9,9 @@ __pycache__/
 # 密钥
 .env
 
+# 个人学习文档
+PROJECT_GUIDE.md
+
 # IDE
 .idea/
 .vscode/
