@@ -363,7 +363,7 @@ body {
     display: flex !important;
     flex-direction: column !important;
     width: auto !important;
-    padding: 0 16px !important;
+    padding: 0 16px 12px !important;
 }
 
 .context-pane {
@@ -384,6 +384,19 @@ body {
     margin: 0 0 12px !important;
     padding: 2px 0 10px;
     border-bottom: 1px solid var(--hairline-soft);
+}
+
+/* 标题横线与聊天框之间只保留一段统一间距。 */
+.main-pane:has(.main-toolbar) {
+    gap: 12px !important;
+}
+
+.main-pane > .block:has(.main-toolbar) .html-container {
+    padding: 10px 12px 0 !important;
+}
+
+.main-pane > .block:has(.main-toolbar) .main-toolbar {
+    margin-bottom: 0 !important;
 }
 
 .main-toolbar-copy {
@@ -455,6 +468,8 @@ body {
     flex: 1 1 auto !important;
     min-width: 0 !important;
     min-height: 0 !important;
+    gap: 10px !important;
+    justify-content: flex-start !important;
 }
 
 .summary-row {
@@ -796,16 +811,16 @@ body {
 }
 
 #support-chatbot {
-    flex: 1 1 auto !important;
+    flex: 0 0 auto !important;
     min-width: 0 !important;
     min-height: 280px !important;
-    height: min(560px, max(280px, calc(100vh - 260px))) !important;
-    max-height: max(280px, calc(100vh - 260px)) !important;
+    height: min(620px, max(320px, calc(100vh - 220px))) !important;
+    max-height: max(320px, calc(100vh - 220px)) !important;
     border: 1px solid var(--hairline) !important;
     border-radius: 16px !important;
     background: #fcfbf9 !important;
-    overflow: hidden auto !important;
-    padding: 16px 18px 12px !important;
+    overflow: hidden !important;
+    padding: 14px 16px 10px !important;
     box-shadow: inset 0 1px 0 rgba(17, 17, 17, 0.02);
 }
 
@@ -816,16 +831,52 @@ body {
     min-height: 0;
 }
 
+#support-chatbot .bubble-wrap {
+    height: 100%;
+    overflow: hidden !important;
+}
+
 #support-chatbot .message-wrap {
+    flex: 1 1 auto;
+    height: 100%;
+    overflow-x: hidden;
     overflow-y: auto;
 }
 
-/* ===== flex-wrap 统一尺寸约束，避免短中文被压成逐字换行 ===== */
+/* ===== 让消息行占满聊天区，气泡再按内容自适应 ===== */
+#support-chatbot .message-row {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box;
+}
+
+#support-chatbot .message-row.user-row {
+    justify-content: flex-end !important;
+}
+
+#support-chatbot .message-row.bot-row {
+    justify-content: flex-start !important;
+}
+
 #support-chatbot .message-row .flex-wrap {
     max-width: min(84%, 760px) !important;
     min-width: 0 !important;
     width: auto !important;
+    flex: 0 1 auto !important;
     box-sizing: border-box;
+}
+
+#support-chatbot .message-row.user-row .flex-wrap {
+    align-items: flex-end !important;
+    margin-left: auto !important;
+    margin-right: 0 !important;
+}
+
+#support-chatbot .message-row.bot-row .flex-wrap {
+    align-items: flex-start !important;
+    margin-left: 0 !important;
+    margin-right: auto !important;
 }
 
 #support-chatbot .message-row .flex-wrap > .message {
@@ -835,12 +886,10 @@ body {
     width: auto !important;
     max-width: 100% !important;
     min-width: 0;
-    /* 删除 width:100%; 这一行 */
+    flex: 0 1 auto !important;
 }
 
-#support-chatbot .message-row {
-    margin-bottom: 12px !important;
-}
+#support-chatbot .message-row { margin-bottom: 10px !important; }
 
 #support-chatbot .message-row .flex-wrap > .message.bot,
 #support-chatbot .message-row .flex-wrap > .message.user {
@@ -851,7 +900,7 @@ body {
 
 #support-chatbot .message.bot .panel-full-width {
     display: block !important;
-    width: max-content !important;
+    width: fit-content !important;
     max-width: 100% !important;
     padding: 11px 14px;
     background: var(--surface) !important;
@@ -860,13 +909,13 @@ body {
     box-shadow: 0 1px 4px rgba(17, 17, 17, 0.04);
     color: var(--ink) !important;
     box-sizing: border-box;
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
     word-break: normal;
 }
 
 #support-chatbot .message.user .panel-full-width {
     display: block !important;
-    width: max-content !important;
+    width: fit-content !important;
     max-width: 100% !important;
     padding: 11px 14px;
     background: var(--ink) !important;
@@ -875,15 +924,17 @@ body {
     box-shadow: 0 1px 2px rgba(17, 17, 17, 0.08);
     color: #ffffff !important;
     box-sizing: border-box;
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
     word-break: normal;
 }
 
 #support-chatbot .message.bot .panel-full-width .prose,
 #support-chatbot .message.user .panel-full-width .prose {
+    display: block !important;
     width: auto !important;
     max-width: 100% !important;
     min-width: 0 !important;
+    white-space: normal !important;
 }
 
 
@@ -913,6 +964,7 @@ body {
 #support-chatbot .message .prose p,
 #support-chatbot .message .prose li {
     margin: 0 0 6px !important;
+    white-space: pre-wrap !important;
 }
 
 #support-chatbot .message .prose p:last-child,
@@ -962,16 +1014,33 @@ body {
 #support-input {
     flex: 0 0 auto !important;
     min-width: 0 !important;
+    margin: 0 0 12px !important;
     border: 1px solid var(--hairline) !important;
     border-radius: 14px !important;
     background: var(--surface) !important;
-    box-shadow: 0 1px 0 rgba(17, 17, 17, 0.02);
+    box-shadow: 0 3px 12px rgba(31, 41, 51, 0.08) !important;
     overflow: hidden;
 }
 
 #support-input:focus-within {
     border-color: var(--accent) !important;
-    box-shadow: 0 0 0 3px rgba(194, 65, 12, 0.12);
+    box-shadow: 0 4px 14px rgba(31, 41, 51, 0.1),
+        0 0 0 2px rgba(194, 65, 12, 0.08) !important;
+}
+
+/* ChatInterface 的内部输入行只负责布局，不显示额外的外框。 */
+.chat-shell .row:has(#support-input) {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+}
+
+.chat-shell .gr-group:has(#support-input),
+.chat-shell .styler:has(#support-input) {
+    background: transparent !important;
+    border-color: transparent !important;
+    box-shadow: none !important;
 }
 
 #support-input textarea {
