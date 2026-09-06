@@ -109,17 +109,27 @@ python app.py
 
 ### 3.1 读取配置
 
-config.py 使用 python-dotenv 读取项目根目录的 .env。部分 DEEPSEEK_* 配置也会从项目上一级目录借读。
+config.py 使用 python-dotenv，只读取当前项目根目录的 .env，不会扫描或借用父目录中的配置文件。这样项目移动、克隆或部署到其他机器后，不依赖原来的目录结构。
 
 配置优先级：
 
 ~~~text
-项目 .env 中的 LLM_* / EMBEDDING_*
+启动 Python 进程前显式设置的系统环境变量
         |
-项目上一级 .env 中的 DEEPSEEK_*
+项目根目录 .env 中的 LLM_* / EMBEDDING_* / RAG_*
         |
-代码默认值
+Settings 中的代码默认值
 ~~~
+
+项目不再自动读取 DEEPSEEK_API_KEY、DEEPSEEK_BASE_URL 等旧字段。迁移已有 DeepSeek 配置时，应在项目自己的 .env 中使用：
+
+~~~dotenv
+LLM_API_KEY=你的本地密钥
+LLM_BASE_URL=https://api.deepseek.com/v1
+LLM_MODEL=deepseek-chat
+~~~
+
+其中 LLM_API_KEY 没有可用的内置默认值，必须通过系统环境变量或项目 .env 提供。真实 .env 已被 .gitignore 排除，Git 中只保留不含密钥的 .env.example。
 
 ### 3.2 创建 AssistantService
 
@@ -806,4 +816,3 @@ Agent 不调工具   -> agent.py / tool calling
 8. 将 SessionMemory 换成持久化实现，理解内存状态和业务状态的区别。
 
 掌握这条链路后，你就能独立替换模型、知识库、检索器、业务工具和前端界面。
-
