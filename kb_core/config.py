@@ -11,24 +11,8 @@ from dotenv import load_dotenv
 
 # 项目根目录 = kb_core 的上一级
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-# 加载本项目 .env（若存在）
+# 独立项目只读取自身根目录的 .env，不依赖父目录配置。
 load_dotenv(PROJECT_ROOT / ".env")
-
-# 外层目录（如 C:\Users\m1527\Desktop\AI\.env）只“借读” DEEPSEEK_* 配置，
-# 不整包写入环境变量 —— 避免 LANGSMITH_TRACING 等外层开关污染本项目进程。
-_outer = {}
-try:
-    from dotenv import dotenv_values
-
-    _outer = dotenv_values(PROJECT_ROOT.parent / ".env") or {}
-except Exception:  # pragma: no cover
-    _outer = {}
-
-_outer_key = (_outer.get("DEEPSEEK_API_KEY") or "").strip()
-_outer_model = (_outer.get("DEEPSEEK_MODEL") or "deepseek-chat").strip()
-_outer_base = (_outer.get("DEEPSEEK_BASE_URL") or "").strip()
-if _outer_base and not _outer_base.rstrip("/").endswith("/v1"):
-    _outer_base = _outer_base.rstrip("/") + "/v1"
 
 
 def _env(key: str, default: str = "") -> str:
@@ -49,16 +33,10 @@ class Settings:
     vector_store_file: Path = PROJECT_ROOT / "runtime" / "vectors.json"
 
     # ----- LLM -----
-    # 优先级：项目 .env 的 LLM_* > 外层 .env 的 DEEPSEEK_* > 内置默认
-    llm_base_url: str = field(
-        default_factory=lambda: _env("LLM_BASE_URL") or _outer_base or "https://api.deepseek.com"
-    )
-    llm_api_key: str = field(
-        default_factory=lambda: _env("LLM_API_KEY") or _outer_key
-    )
-    llm_model: str = field(
-        default_factory=lambda: _env("LLM_MODEL") or _outer_model
-    )
+    # LLM 配置只来自当前项目的 .env 或显式环境变量。
+    llm_base_url: str = field(default_factory=lambda: _env("LLM_BASE_URL", "https://api.deepseek.com"))
+    llm_api_key: str = field(default_factory=lambda: _env("LLM_API_KEY"))
+    llm_model: str = field(default_factory=lambda: _env("LLM_MODEL", "deepseek-chat"))
     llm_temperature: float = field(default_factory=lambda: float(_env("LLM_TEMPERATURE", "0.2")))
 
     # ----- Embedding -----
