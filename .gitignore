@@ -1,0 +1,15 @@
+# ===== 电商客服 RAG 知识库 =====
+# 运行期产物
+runtime/
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# 密钥
+.env
+
+# IDE
+.idea/
+.vscode/
+*.log

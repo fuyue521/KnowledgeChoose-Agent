@@ -1,0 +1,20 @@
+# 知选商城智能客服的独立运行依赖
+# 推荐在 Conda 环境 AI 中安装：
+#   conda activate AI
+#   python -m pip install -r requirements.txt
+
+# Web UI
+gradio>=5.50,<6
+
+# LangChain 1.x Agent / RAG
+langchain>=1,<2
+langchain-core>=1,<2
+langchain-openai>=1,<2
+langgraph>=1,<2
+
+# Configuration and Chinese tokenization
+python-dotenv>=1,<2
+jieba>=0.42.1
+
+# Tests
+pytest>=8,<10
