@@ -20,7 +20,11 @@
 | 可视化界面 | Gradio Web UI + 命令行 CLI |
 | 评测 | 一键跑标准问题集的“检索命中率” |
 
-## 二、项目结构
+## 二、界面演示
+
+![知选商城智能客服工作台](ScreenShot/image.png)
+
+## 三、项目结构
 
 ```
 知识库Agent/
@@ -30,6 +34,8 @@
 ├── evaluate.py             # 检索命中率评测
 ├── requirements.txt        # conda 环境依赖清单
 ├── .env.example            # 配置模板（复制为 .env）
+├── ScreenShot/
+│   └── image.png            # Web 界面演示截图
 ├── data/
 │   ├── raw/                # 知识库原始文档（Markdown，可自行增删）
 │   └── orders_sample.json  # 模拟订单数据（订单查询工具使用）
@@ -51,7 +57,7 @@
 └── runtime/                # 运行时生成（索引/向量），已 gitignore
 ```
 
-## 三、环境准备（conda，重要）
+## 四、环境准备（conda，重要）
 
 本机已创建 conda 环境 `AI`，且已内置 langchain 1.x / langgraph / langchain-openai。
 **本项目代码按 langchain 1.x API 编写**（`create_agent`），与网上 0.3 旧教程不同，勿混用。
@@ -61,7 +67,7 @@ conda activate AI
 pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
 ```
 
-## 四、配置密钥
+## 五、配置密钥
 
 ```bash
 # Windows cmd
@@ -81,7 +87,7 @@ LLM_API_KEY=sk-你的DeepSeek密钥
 - 方案② 阿里云百炼：用 `.env.example` 中注释的百炼配置（Qwen3.7 Embedding，批量上限 20）；
 - 无任何密钥时：把 `EMBEDDING_PROVIDER=debug` 可离线跑通全流程（检索效果一般，仅演示用）。
 
-## 五、运行步骤
+## 六、运行步骤
 
 ```bash
 # 1. 构建知识库索引（首次必须）
@@ -98,7 +104,7 @@ python cli.py --mode chain
 
 Windows 也可双击 `启动_Windows.bat`（自动建索引 + 启动界面）。
 
-## 六、可试问的问题
+## 七、可试问的问题
 
 - 知选 X3 手机多少钱？支持防水吗？
 - 耳机拆封了还能七天无理由退货吗？退货运费谁出？
@@ -111,13 +117,13 @@ Windows 也可双击 `启动_Windows.bat`（自动建索引 + 启动界面）。
 
 多轮示例：先问「X3 手机多少钱」，再问「那它防水吗」（含“它”，考验对话理解）。
 
-## 七、如何换成你自己的知识库 / 业务
+## 八、如何换成你自己的知识库 / 业务
 
 1. 把业务文档（Markdown 最佳；政策、FAQ、说明书等）放入 `data/raw/`，支持多文件。
 2. 重新运行 `python build_index.py`（增量场景可改造为按文件 sha1 去重后追加）。
 3. 如需接入真实订单/业务系统：改写 `kb_core/order_tool.py` 中的 `check_order`，把本地 JSON 换成 HTTP 调用即可，Agent 无需改动。
 
-## 八、测试与评测
+## 九、测试与评测
 
 ```bash
 python -m unittest tests.test_core -v   # 单元测试（零外部依赖，离线可跑）
@@ -125,7 +131,7 @@ python -m pytest tests -v               # 已安装 pytest 时同样可用
 python evaluate.py                      # 检索命中率评测（仅需 embedding，离线可跑）
 ```
 
-## 九、常见问题
+## 十、常见问题
 
 | 问题 | 解决 |
 |---|---|
@@ -135,7 +141,7 @@ python evaluate.py                      # 检索命中率评测（仅需 embeddi
 | 想换向量库 | 替换 `kb_core/store.py` 的 `VectorStore` 内部实现即可（接口已与 Chroma/Milvus 对齐思路） |
 | 端口被占用 | `python app.py` 里改 `server_port` |
 
-## 十、作业答辩要点（备查）
+## 十一、作业答辩要点（备查）
 
 1. **架构**：文档加载 → 中文切片 → 双路向量化（语义+关键词）→ RRF 融合 → 生成；Agent 层做意图判断与工具编排。
 2. **亮点**：混合检索 + RRF（单路向量检索对型号/政策编号类精确问题弱）；标题感知切片；引用溯源；双模式可对比实验。
